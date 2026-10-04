@@ -1,0 +1,22 @@
+{
+  "schemaVersion": 1,
+  "id": "greenmod",
+  "version": "${version}",
+  "name": "Green Client Tweaks",
+  "description": "Inventory sort, neon green nametags, 2D green hitboxes, mod-user badge, no fire overlay, no view bobbing, clean green crosshair.",
+  "authors": ["you"],
+  "license": "MIT",
+  "environment": "client",
+  "entrypoints": {
+    "client": ["com.greenmod.GreenModClient"]
+  },
+  "mixins": [
+    { "config": "greenmod.mixins.json", "environment": "client" }
+  ],
+  "depends": {
+    "fabricloader": ">=0.19.2",
+    "minecraft": "26.1.2",
+    "java": ">=25",
+    "fabric-api": "*"
+  }
+}

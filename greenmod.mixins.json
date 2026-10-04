@@ -1,0 +1,13 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "com.greenmod.mixin",
+  "compatibilityLevel": "JAVA_25",
+  "client": [
+    "EntityMixin",
+    "OptionsMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 0
+  }
+}
