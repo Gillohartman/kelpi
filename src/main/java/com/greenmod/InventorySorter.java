@@ -4,15 +4,18 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.MultiPlayerGameMode;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.world.inventory.ClickType;
+import net.minecraft.world.inventory.ContainerInput;
 import net.minecraft.world.item.ItemStack;
 
+import java.lang.reflect.Method;
 import java.util.Comparator;
 
 /** Merges partial stacks and sorts the 27 main inventory slots. */
 public final class InventorySorter {
 	private static final int FIRST = 9;   // first main-inventory slot in the player menu
 	private static final int LAST = 35;   // last main-inventory slot
+
+	private static Method clickMethod;
 
 	private InventorySorter() {}
 
@@ -69,7 +72,25 @@ public final class InventorySorter {
 		return p.containerMenu.slots.get(index).getItem();
 	}
 
+	/** Finds the click method by name, because it differs between 26.x versions. */
 	private static void click(MultiPlayerGameMode gm, int containerId, int slot, LocalPlayer p) {
-		gm.handleInventoryMouseClick(containerId, slot, 0, ClickType.PICKUP, p);
+		try {
+			if (clickMethod == null) {
+				for (String name : new String[] {"handleContainerInput", "handleInventoryMouseClick"}) {
+					for (Method m : MultiPlayerGameMode.class.getDeclaredMethods()) {
+						if (m.getName().equals(name) && m.getParameterCount() == 5) {
+							m.setAccessible(true);
+							clickMethod = m;
+							break;
+						}
+					}
+					if (clickMethod != null) break;
+				}
+			}
+			if (clickMethod != null) {
+				clickMethod.invoke(gm, containerId, slot, 0, ContainerInput.PICKUP, p);
+			}
+		} catch (Exception ignored) {
+		}
 	}
 }
